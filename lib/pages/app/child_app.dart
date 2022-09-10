@@ -1,15 +1,18 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_open_street_map/flutter_open_street_map.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:parental/pages/app/child/browser.dart';
+import 'package:parental/pages/app/child/launcher.dart';
+import 'package:parental/pages/app/qrcode_widget.dart';
+import 'package:parental/pages/app/usage_statistics_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:location/location.dart';
 import '../../provider/sign_in.dart';
-import 'package:flutter/foundation.dart';
-import 'package:location/location.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class ChildApp extends StatefulWidget {
   const ChildApp({Key? key, required this.data, required this.doc})
@@ -23,8 +26,11 @@ class ChildApp extends StatefulWidget {
 
 class _ChildAppState extends State<ChildApp> {
   List<Widget> toReturn = [];
+  Widget? qrCode;
 
   Timer? timer;
+  UsageStatisticsWidget usages = UsageStatisticsWidget();
+  bool canPlay = false;
 
   @override
   void initState() {
@@ -32,16 +38,51 @@ class _ChildAppState extends State<ChildApp> {
     timer = Timer.periodic(Duration(seconds: 10), (Timer t) => sendLocation());
   }
 
+  Future<void> _showMyDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('AlertDialog Title'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('You are not allowed to play yet'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('I Understand'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void generateQrCode() {
     setState(() {
       toReturn.add(
         QrImage(data: FirebaseAuth.instance.currentUser!.uid),
       );
+      qrCode = QrImage(data: FirebaseAuth.instance.currentUser!.uid);
     });
   }
 
   void sendLocation() async {
-    Location location = new Location();
+    if (mounted) {
+      setState(() {
+        canPlay = usages.getDuration() > 0;
+        print("can the child play? ${usages.getDuration()}");
+        print(canPlay);
+      });
+    }
+    Location location = Location();
 
     bool _serviceEnabled;
     PermissionStatus _permissionGranted;
@@ -69,7 +110,7 @@ class _ChildAppState extends State<ChildApp> {
 
     doc.get().then((data) {
       if (data.exists) {
-        if (!data.data()!.isEmpty) {
+        if (data.data()!.isNotEmpty) {
           FirebaseFirestore.instance
               .collection('users')
               .doc(widget.doc?.id)
@@ -82,45 +123,173 @@ class _ChildAppState extends State<ChildApp> {
     });
   }
 
+  void toLauncher() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => AppsListScreen()));
+  }
+
+  void toBrowser() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => ChildBrowser()));
+  }
+
+  void toQrCode() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => QRCodeWidget()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Parental Controls"),
-          centerTitle: true,
-          actions: [
-            TextButton(
-                onPressed: () {
-                  print("logging out");
-                  final provider =
-                      Provider.of<SignInProvider>(context, listen: false);
-                  provider.logout();
-                },
-                child: const Text(
-                  "Logout",
-                  style: TextStyle(color: Colors.redAccent),
-                ))
+      appBar: AppBar(
+        title: const Text("Parental Controls"),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              final provider =
+                  Provider.of<SignInProvider>(context, listen: false);
+              provider.logout();
+            },
+            icon: FaIcon(FontAwesomeIcons.arrowRightFromBracket),
+            color: Colors.amber[500],
+          )
+        ],
+      ),
+      body: Center(
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 30,
+            ),
+            Container(
+              width: 300,
+              height: 150,
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const FaIcon(
+                            FontAwesomeIcons.addressBook,
+                            size: 25,
+                          ),
+                          Text(
+                            "   ${widget.data['name']}",
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const FaIcon(
+                            FontAwesomeIcons.hashtag,
+                            size: 25,
+                          ),
+                          Text(
+                            "   ${widget.data['age']}",
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const FaIcon(
+                            FontAwesomeIcons.phone,
+                            size: 20,
+                          ),
+                          Text(
+                            "   ${widget.data['phoneNumber']}",
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const FaIcon(
+                            FontAwesomeIcons.person,
+                            size: 25,
+                          ),
+                          Text(
+                            "    ${widget.data['identity']}",
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.all(20.0),
+                child: usages,
+              ),
+            ),
           ],
         ),
-        body: Center(
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 30,
+      ),
+      floatingActionButton: SpeedDial(
+        animatedIcon: AnimatedIcons.menu_close,
+        animatedIconTheme:
+            IconThemeData(size: 30, color: Color.fromARGB(255, 249, 170, 51)),
+        backgroundColor: Colors.blueGrey.shade600,
+        visible: true,
+        curve: Curves.bounceIn,
+        spacing: 10,
+        spaceBetweenChildren: 20,
+        children: [
+          SpeedDialChild(
+              child: FaIcon(
+                FontAwesomeIcons.android,
+                color: Colors.blueGrey.shade600,
               ),
-              Text(
-                "Welcome ${widget.data['name']}(${widget.data['age']} yrs old)",
-                style: const TextStyle(fontSize: 20),
+              backgroundColor: Colors.amber[600],
+              onTap: toLauncher,
+              label: 'App Launcher',
+              labelStyle: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                  fontSize: 16.0),
+              labelBackgroundColor: Colors.blueGrey.shade600,
+              visible: canPlay),
+          SpeedDialChild(
+              child: FaIcon(
+                FontAwesomeIcons.globe,
+                color: Colors.blueGrey.shade600,
               ),
-              const SizedBox(
-                height: 50,
+              backgroundColor: Colors.amber[600],
+              onTap: toBrowser,
+              label: 'Open Browser',
+              labelStyle: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                  fontSize: 16.0),
+              labelBackgroundColor: Colors.blueGrey.shade600),
+          SpeedDialChild(
+              child: FaIcon(
+                FontAwesomeIcons.qrcode,
+                color: Colors.blueGrey.shade600,
               ),
-              ElevatedButton(
-                  onPressed: generateQrCode, child: Text("Pair to parent")),
-              ...toReturn,
-            ],
-          ),
-        ));
+              backgroundColor: Colors.amber[600],
+              onTap: toQrCode,
+              label: 'Pair to Parent',
+              labelStyle: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                  fontSize: 16.0),
+              labelBackgroundColor: Colors.blueGrey.shade600),
+        ],
+      ),
+    );
   }
 }
 

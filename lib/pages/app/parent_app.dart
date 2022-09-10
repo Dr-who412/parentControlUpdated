@@ -50,14 +50,12 @@ class _ParentAppState extends State<ParentApp> {
 
   Widget showChild() {
     try {
-      print(widget.data['child']);
-      final doc = FirebaseFirestore.instance.collection('users').doc(widget.id);
-      final Stream<DocumentSnapshot> _usersStream = FirebaseFirestore.instance
+      final Stream<DocumentSnapshot> usersStream = FirebaseFirestore.instance
           .collection('users')
           .doc(widget.data['child'])
           .snapshots();
       return StreamBuilder<DocumentSnapshot>(
-          stream: _usersStream,
+          stream: usersStream,
           builder:
               (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
             if (snapshot.hasData) {
@@ -69,26 +67,25 @@ class _ParentAppState extends State<ParentApp> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         height: 30,
                       ),
                       Text(
                         "Child's name: ${data['name']}",
-                        style: TextStyle(fontSize: 20),
+                        style: const TextStyle(fontSize: 20),
                       )
                     ],
                   ),
                 );
               } catch (e) {
-                return Text("Something went wrong");
+                return const Text("Something went wrong");
               }
             } else {
-              return Text("Pair with your child first");
+              return const Text("Pair with your child first");
             }
           });
     } catch (e) {
-      print(e);
-      return Text("Pair with yourasdasd child first");
+      return const Text("Pair with your child first");
     }
   }
 
