@@ -38,24 +38,20 @@ class _UsageStatisticsWidgetState extends State<UsageStatisticsWidget> {
 
   void getApps() async {
     if (loading) {
-      print("loading");
       return;
     }
     if (!mounted) return;
     setState(() {
       endDate = DateTime.now();
     });
-    Duration st = const Duration(hours: 10);
+    Duration st = const Duration(hours: 20);
     DateTime startDate = endDate.subtract(const Duration(hours: 12));
-    print("dates");
-    print(endDate);
-    print(startDate);
     await AppUsage.getAppUsage(startDate, endDate).then((infoList) async {
       if (!mounted) return;
       await DeviceApps.getInstalledApplications(
               onlyAppsWithLaunchIntent: true, includeAppIcons: true)
           .then((apps) {
-        print('adding');
+        if (!mounted) return;
         setState(() {
           loading = true;
         });
@@ -63,10 +59,6 @@ class _UsageStatisticsWidgetState extends State<UsageStatisticsWidget> {
         for (var app in apps) {
           for (var info in infoList) {
             if (app.packageName == info.packageName) {
-              // print("hey this is the startdate: ${info.startDate}");
-              // print("this is the endDate: ${info.endDate}");
-              // print("this is the usage: ${info.usage}");
-
               if (app is ApplicationWithIcon) {
                 CircleAvatar avatar = CircleAvatar(
                   backgroundImage: MemoryImage(app.icon),
@@ -78,7 +70,6 @@ class _UsageStatisticsWidgetState extends State<UsageStatisticsWidget> {
                     usage: info.usage.toString().split(".")[0]);
                 usageApps.add(appTile);
                 st = Duration(minutes: st.inMinutes - info.usage.inMinutes);
-                // print(st);
 
                 final usageDoc = {
                   'appName': app.appName,
@@ -109,8 +100,6 @@ class _UsageStatisticsWidgetState extends State<UsageStatisticsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print(screenTime);
-    print(usageApps);
     if (usageApps.length == 0) {
       return Center(
         child: Column(
@@ -127,7 +116,12 @@ class _UsageStatisticsWidgetState extends State<UsageStatisticsWidget> {
     } else {
       return Scaffold(
         appBar: AppBar(
-          title: Text("Duration Left: ${screenTime.inMinutes} minutes"),
+          backgroundColor: Color(0x00),
+          elevation: 0,
+          title: Text(
+            "Duration Left: ${screenTime.inMinutes} minutes",
+            style: TextStyle(color: Color(0xff067bc2)),
+          ),
         ),
         body: Scrollbar(
           child: ListView.builder(

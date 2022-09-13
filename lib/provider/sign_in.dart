@@ -51,6 +51,6 @@ class SignInProvider extends ChangeNotifier {
 
   Future configureUserData(Map<String, dynamic> data, String id) async {
     final docUser = FirebaseFirestore.instance.collection('users').doc(id);
-    docUser.set(data);
+    docUser.set(data, SetOptions(merge: true));
   }
 }

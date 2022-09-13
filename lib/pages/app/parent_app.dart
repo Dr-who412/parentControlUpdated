@@ -1,9 +1,14 @@
 import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:parental/pages/app/parent/child_browser_history_widget.dart';
+import 'package:parental/pages/app/parent/child_location_map_widget.dart';
+import 'package:parental/pages/app/parent/show_app_usage_widget.dart';
 import 'package:provider/provider.dart';
-
 import '../../provider/sign_in.dart';
+import '../configuration_page.dart';
 
 class ParentApp extends StatefulWidget {
   const ParentApp({Key? key, required this.data, required this.id})
@@ -16,29 +21,28 @@ class ParentApp extends StatefulWidget {
 }
 
 class _ParentAppState extends State<ParentApp> {
-  String QrId = '';
+  String qrID = '';
+  Map<String, dynamic> childData = {};
 
   Future scanQr() async {
     try {
-      ScanResult qrResult = await BarcodeScanner.scan();
-      setState(() {
-        QrId = qrResult.rawContent;
-        print(QrId);
-        pairChild(QrId);
+      await BarcodeScanner.scan(
+              options: const ScanOptions(restrictFormat: [BarcodeFormat.qr]))
+          .then((result) {
+        pairChild(result.rawContent);
       });
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
   }
 
   void pairChild(String id) {
-    final doc = FirebaseFirestore.instance
+    if (id.isEmpty) return;
+    FirebaseFirestore.instance
         .collection('users')
         .doc(widget.id)
         .get()
         .then((data) {
       if (data.exists) {
-        if (!data.data()!.isEmpty) {
+        if (data.data()!.isNotEmpty) {
           FirebaseFirestore.instance
               .collection('users')
               .doc(widget.id)
@@ -48,84 +52,399 @@ class _ParentAppState extends State<ParentApp> {
     });
   }
 
-  Widget showChild() {
-    try {
-      final Stream<DocumentSnapshot> usersStream = FirebaseFirestore.instance
-          .collection('users')
-          .doc(widget.data['child'])
-          .snapshots();
-      return StreamBuilder<DocumentSnapshot>(
-          stream: usersStream,
-          builder:
-              (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-            if (snapshot.hasData) {
-              try {
-                Map<String, dynamic> data =
-                    snapshot.data?.data() as Map<String, dynamic>;
-                return Center(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+  Widget showChild(BuildContext context) {
+    final Stream<DocumentSnapshot> _usersStream = FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.data['child'])
+        .snapshots();
+    return StreamBuilder<DocumentSnapshot>(
+        stream: _usersStream,
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          if (snapshot.hasData && snapshot.data!.exists) {
+            Map<String, dynamic> data =
+                snapshot.data!.data() as Map<String, dynamic>;
+            return Card(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  children: [
+                    Center(
+                        child: Text(
+                      "Child Data",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                    )),
+                    Row(
+                      children: [
+                        Icon(Icons.face),
+                        Text(
+                          "|",
+                          style: TextStyle(fontSize: 25),
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(data['name'])
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        FaIcon(FontAwesomeIcons.hashtag),
+                        SizedBox(
+                          width: 3,
+                        ),
+                        Text(
+                          "|",
+                          style: TextStyle(fontSize: 25),
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(data['age'].toString())
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        FaIcon(FontAwesomeIcons.phone),
+                        Text(
+                          "|",
+                          style: TextStyle(fontSize: 25),
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(data['phoneNumber'])
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            );
+          } else if (snapshot.hasData && !snapshot.data!.exists) {
+            return FractionallySizedBox(
+              widthFactor: 1,
+              child: SizedBox(
+                height: 300,
+                child: Card(
+                  child: Center(
+                      child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const SizedBox(
-                        height: 30,
+                      Text("Pair with your child first"),
+                      SizedBox(
+                        height: 20,
                       ),
-                      Text(
-                        "Child's name: ${data['name']}",
-                        style: const TextStyle(fontSize: 20),
-                      )
+                      ElevatedButton(onPressed: scanQr, child: Text('Pair'))
                     ],
-                  ),
-                );
-              } catch (e) {
-                return const Text("Something went wrong");
-              }
-            } else {
-              return const Text("Pair with your child first");
-            }
-          });
-    } catch (e) {
-      return const Text("Pair with your child first");
-    }
+                  )),
+                ),
+              ),
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Parental Controls"),
-          centerTitle: true,
-          actions: [
-            TextButton(
-                onPressed: () {
-                  print("logging out");
-                  final provider =
-                      Provider.of<SignInProvider>(context, listen: false);
-                  provider.logout();
-                },
-                child: const Text(
-                  "Logout",
-                  style: TextStyle(color: Colors.redAccent),
-                ))
-          ],
-        ),
-        body: Center(
+      appBar: AppBar(
+        title: const Text("Parental Controls"),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              final provider =
+                  Provider.of<SignInProvider>(context, listen: false);
+              provider.logout();
+            },
+            icon: const FaIcon(FontAwesomeIcons.arrowRightFromBracket),
+          )
+        ],
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 30,
               ),
-              Text(
-                "Welcome ${widget.data['name']}(${widget.data['age']} yrs old)",
-                style: const TextStyle(fontSize: 20),
+              // Card(
+              //   child: Padding(
+              //     padding: const EdgeInsets.all(8.0),
+              //     child: Column(
+              //       crossAxisAlignment: CrossAxisAlignment.start,
+              //       children: [
+              //         Row(
+              //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //           children: [
+              //             const FaIcon(
+              //               FontAwesomeIcons.addressBook,
+              //               size: 25,
+              //             ),
+              //             Text(
+              //               "   ${widget.data['name']}",
+              //               style: const TextStyle(fontSize: 20),
+              //             ),
+              //           ],
+              //         ),
+              //         Row(
+              //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //           children: [
+              //             const FaIcon(
+              //               FontAwesomeIcons.hashtag,
+              //               size: 25,
+              //             ),
+              //             Text(
+              //               "   ${widget.data['age']}",
+              //               style: const TextStyle(fontSize: 20),
+              //             ),
+              //           ],
+              //         ),
+              //         Row(
+              //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //           children: [
+              //             const FaIcon(
+              //               FontAwesomeIcons.phone,
+              //               size: 20,
+              //             ),
+              //             Text(
+              //               "   ${widget.data['phoneNumber']}",
+              //               style: const TextStyle(fontSize: 20),
+              //             ),
+              //           ],
+              //         ),
+              //         Row(
+              //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //           children: [
+              //             const FaIcon(
+              //               FontAwesomeIcons.person,
+              //               size: 25,
+              //             ),
+              //             Text(
+              //               "    ${widget.data['identity']}",
+              //               style: const TextStyle(fontSize: 20),
+              //             ),
+              //           ],
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.face,
+                        size: 30,
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      const Text(
+                        "|",
+                        style: TextStyle(fontSize: 40),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        widget.data['name'],
+                        style: TextStyle(fontSize: 25),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              SizedBox(
-                height: 50,
+              Card(
+                elevation: 0,
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          const FaIcon(
+                            FontAwesomeIcons.hashtag,
+                            size: 25,
+                          ),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          const Text(
+                            "|",
+                            style: TextStyle(fontSize: 30),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            widget.data['age'].toString(),
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const FaIcon(
+                            FontAwesomeIcons.phone,
+                            size: 25,
+                          ),
+                          const SizedBox(
+                            width: 2,
+                          ),
+                          const Text(
+                            "|",
+                            style: TextStyle(fontSize: 30),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            widget.data['phoneNumber'].toString(),
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const FaIcon(
+                            FontAwesomeIcons.person,
+                            size: 25,
+                          ),
+                          const SizedBox(
+                            width: 11,
+                          ),
+                          const Text(
+                            "|",
+                            style: TextStyle(fontSize: 30),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            widget.data['identity'].toString(),
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              ElevatedButton(onPressed: scanQr, child: Text("Pair to child")),
-              showChild(),
+              showChild(context),
             ],
           ),
-        ));
+        ),
+      ),
+      floatingActionButton: SpeedDial(
+        animatedIcon: AnimatedIcons.menu_close,
+        animatedIconTheme: const IconThemeData(
+          size: 30,
+        ),
+        visible: true,
+        backgroundColor: const Color(0xFFFF1da5),
+        curve: Curves.bounceIn,
+        spacing: 10,
+        spaceBetweenChildren: 20,
+        children: [
+          SpeedDialChild(
+            backgroundColor: const Color(0xFFFF1da5),
+            child: const FaIcon(
+              FontAwesomeIcons.qrcode,
+              color: Colors.white,
+            ),
+            onTap: scanQr,
+            label: 'Pair to Child',
+            labelStyle: const TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 16.0,
+                color: Color(0xFF067BC2)),
+          ),
+          SpeedDialChild(
+            child: const FaIcon(
+              FontAwesomeIcons.mapPin,
+              color: Colors.white,
+            ),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ChildLocationWidget(data: widget.data)));
+            },
+            backgroundColor: const Color(0xFFFF1da5),
+            label: 'Child Location',
+            labelStyle: const TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 16.0,
+                color: Color(0xFF067BC2)),
+          ),
+          SpeedDialChild(
+            child: const FaIcon(
+              FontAwesomeIcons.android,
+              color: Colors.white,
+            ),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ShowAppUsageWidget(data: widget.data)));
+            },
+            backgroundColor: const Color(0xFFFF1da5),
+            label: 'Child App Usage',
+            labelStyle: const TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 16.0,
+                color: Color(0xFF067BC2)),
+          ),
+          SpeedDialChild(
+            child: const FaIcon(
+              FontAwesomeIcons.clockRotateLeft,
+              color: Colors.white,
+            ),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ChildBrowserHistoryWidget(data: widget.data)));
+            },
+            backgroundColor: const Color(0xFFFF1da5),
+            label: 'Child Browser History',
+            labelStyle: const TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 16.0,
+                color: Color(0xFF067BC2)),
+          ),
+          SpeedDialChild(
+            child: FaIcon(
+              FontAwesomeIcons.pen,
+              color: Colors.white,
+            ),
+            backgroundColor: Color(0xffff1da5),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ConfigurationPage()));
+            },
+            label: 'Edit Profile',
+            labelStyle: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: Color(0xff067bc2),
+                fontSize: 16.0),
+          ),
+        ],
+      ),
+    );
   }
 }

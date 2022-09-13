@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_apps/device_apps.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AppsListScreen extends StatefulWidget {
@@ -84,7 +86,33 @@ class _AppsListScreenContent extends StatelessWidget {
                                 backgroundColor: Colors.white,
                               )
                             : null,
-                        onTap: () => onAppClicked(context, app),
+                        onTap: () {
+                          FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(FirebaseAuth.instance.currentUser!.uid)
+                              .collection('appsUsage')
+                              .doc(app.packageName)
+                              .get()
+                              .then((result) {
+                            print(result.exists);
+                            if (result.exists) {
+                              bool blocked = result.data()!['blocked'] == null
+                                  ? false
+                                  : result.data()!['blocked'];
+                              if (blocked) {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: Text("This app is blocked"),
+                                  duration: Duration(milliseconds: 2000),
+                                ));
+                              } else {
+                                app.openApp();
+                              }
+                            } else {
+                              app.openApp();
+                            }
+                          });
+                        },
                         title: Text('${app.appName}'),
                         subtitle: Text('Version: ${app.versionName}\n'),
                       ),
@@ -110,7 +138,9 @@ class _AppsListScreenContent extends StatelessWidget {
             actions: <Widget>[
               _AppButtonAction(
                 label: 'Open app',
-                onPressed: () => app.openApp(),
+                onPressed: () {
+                  app.openApp();
+                },
               ),
               _AppButtonAction(
                 label: 'Open app settings',

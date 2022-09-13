@@ -33,7 +33,7 @@ class _ChildBrowserState extends State<ChildBrowser>
     return Scaffold(
       appBar: AppBar(title: const Text("Browser")),
       bottomNavigationBar: Container(
-        color: Colors.black45,
+        color: Color(0xffff1da5),
         child: TabBar(
           controller: tabController,
           tabs: const <Tab>[

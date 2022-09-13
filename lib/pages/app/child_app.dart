@@ -8,6 +8,7 @@ import 'package:parental/pages/app/child/browser.dart';
 import 'package:parental/pages/app/child/launcher.dart';
 import 'package:parental/pages/app/qrcode_widget.dart';
 import 'package:parental/pages/app/usage_statistics_widget.dart';
+import 'package:parental/pages/configuration_page.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:location/location.dart';
@@ -35,7 +36,8 @@ class _ChildAppState extends State<ChildApp> {
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(Duration(seconds: 10), (Timer t) => sendLocation());
+    timer = Timer.periodic(
+        const Duration(seconds: 10), (Timer t) => sendLocation());
   }
 
   Future<void> _showMyDialog() async {
@@ -47,14 +49,14 @@ class _ChildAppState extends State<ChildApp> {
           title: const Text('AlertDialog Title'),
           content: SingleChildScrollView(
             child: ListBody(
-              children: <Widget>[
-                Text('You are not allowed to play yet'),
+              children: const <Widget>[
+                Text('You can still use your phone'),
               ],
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('I Understand'),
+              child: const Text('Nice'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -78,8 +80,6 @@ class _ChildAppState extends State<ChildApp> {
     if (mounted) {
       setState(() {
         canPlay = usages.getDuration() > 0;
-        print("can the child play? ${usages.getDuration()}");
-        print(canPlay);
       });
     }
     Location location = Location();
@@ -152,7 +152,6 @@ class _ChildAppState extends State<ChildApp> {
               provider.logout();
             },
             icon: FaIcon(FontAwesomeIcons.arrowRightFromBracket),
-            color: Colors.amber[500],
           )
         ],
       ),
@@ -229,8 +228,9 @@ class _ChildAppState extends State<ChildApp> {
               height: 10,
             ),
             Expanded(
+              flex: 2,
               child: Padding(
-                padding: EdgeInsets.all(20.0),
+                padding: EdgeInsets.only(bottom: 80),
                 child: usages,
               ),
             ),
@@ -239,82 +239,65 @@ class _ChildAppState extends State<ChildApp> {
       ),
       floatingActionButton: SpeedDial(
         animatedIcon: AnimatedIcons.menu_close,
-        animatedIconTheme:
-            IconThemeData(size: 30, color: Color.fromARGB(255, 249, 170, 51)),
-        backgroundColor: Colors.blueGrey.shade600,
+        animatedIconTheme: IconThemeData(size: 30, color: Color(0xffff1da5)),
+        backgroundColor: Colors.white,
         visible: true,
         curve: Curves.bounceIn,
         spacing: 10,
         spaceBetweenChildren: 20,
         children: [
           SpeedDialChild(
-              child: FaIcon(
-                FontAwesomeIcons.android,
-                color: Colors.blueGrey.shade600,
-              ),
-              backgroundColor: Colors.amber[600],
+              child: FaIcon(FontAwesomeIcons.android, color: Color(0xffff1da5)),
               onTap: toLauncher,
               label: 'App Launcher',
               labelStyle: TextStyle(
                   fontWeight: FontWeight.w500,
-                  color: Colors.white,
+                  color: Color(0xff067bc2),
                   fontSize: 16.0),
-              labelBackgroundColor: Colors.blueGrey.shade600,
               visible: canPlay),
           SpeedDialChild(
-              child: FaIcon(
-                FontAwesomeIcons.globe,
-                color: Colors.blueGrey.shade600,
-              ),
-              backgroundColor: Colors.amber[600],
-              onTap: toBrowser,
-              label: 'Open Browser',
-              labelStyle: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                  fontSize: 16.0),
-              labelBackgroundColor: Colors.blueGrey.shade600),
+            child: FaIcon(
+              FontAwesomeIcons.globe,
+              color: Color(0xffff1da5),
+            ),
+            onTap: toBrowser,
+            label: 'Open Browser',
+            labelStyle: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: Color(0xff067bc2),
+                fontSize: 16.0),
+          ),
           SpeedDialChild(
-              child: FaIcon(
-                FontAwesomeIcons.qrcode,
-                color: Colors.blueGrey.shade600,
-              ),
-              backgroundColor: Colors.amber[600],
-              onTap: toQrCode,
-              label: 'Pair to Parent',
-              labelStyle: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                  fontSize: 16.0),
-              labelBackgroundColor: Colors.blueGrey.shade600),
+            child: FaIcon(
+              FontAwesomeIcons.qrcode,
+              color: Color(0xffff1da5),
+            ),
+            onTap: toQrCode,
+            label: 'Pair to Parent',
+            labelStyle: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: Color(0xff067bc2),
+                fontSize: 16.0),
+          ),
+          SpeedDialChild(
+            child: FaIcon(
+              FontAwesomeIcons.pen,
+              color: Color(0xffff1da5),
+            ),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ConfigurationPage()));
+            },
+            label: 'Edit Profile',
+            labelStyle: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: Color(0xff067bc2),
+                fontSize: 16.0),
+          ),
         ],
       ),
-    );
-  }
-}
-
-class MapViewer extends StatefulWidget {
-  const MapViewer({Key? key}) : super(key: key);
-
-  @override
-  State<MapViewer> createState() => _MapViewerState();
-}
-
-class _MapViewerState extends State<MapViewer> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
-          ),
-      body: FlutterOpenStreetMap(
-          center: LatLong(5, 10),
-          onPicked: (pickedData) {
-            print(pickedData.latLong.latitude);
-            print(pickedData.latLong.longitude);
-            print(pickedData.address);
-          }),
     );
   }
 }
