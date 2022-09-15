@@ -26,7 +26,6 @@ class _GoogleBrowserPageState extends State<GoogleBrowserPage>
   bool get wantKeepAlive => true;
 
   Future<bool> checkIfBlocked(String url) async {
-    print('https://' + url.split("/")[2]);
     return FirebaseFirestore.instance
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -34,7 +33,6 @@ class _GoogleBrowserPageState extends State<GoogleBrowserPage>
         .where('url', isEqualTo: 'https://' + url.split("/")[2])
         .get()
         .then((result) {
-      print(result.size);
       if (result.size > 0) {
         return true;
       } else {
@@ -45,6 +43,7 @@ class _GoogleBrowserPageState extends State<GoogleBrowserPage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
         body: SafeArea(
           child: WebView(
@@ -59,7 +58,7 @@ class _GoogleBrowserPageState extends State<GoogleBrowserPage>
             navigationDelegate: (NavigationRequest request) {
               return checkIfBlocked(request.url).then((value) {
                 if (value) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text("This website is blocked"),
                     duration: Duration(milliseconds: 2000),
                   ));
@@ -68,10 +67,6 @@ class _GoogleBrowserPageState extends State<GoogleBrowserPage>
                   return NavigationDecision.navigate;
                 }
               });
-              // if (request.url.startsWith('https://www.youtube.com/')) {
-              //   return NavigationDecision.prevent;
-              // }
-              // return NavigationDecision.navigate;
             },
             onPageStarted: (String url) {
               FirebaseFirestore.instance
@@ -100,17 +95,17 @@ class _GoogleBrowserPageState extends State<GoogleBrowserPage>
           children: [
             FloatingActionButton(
               heroTag: 'gbackward',
-              child: FaIcon(FontAwesomeIcons.arrowLeft),
+              child: const FaIcon(FontAwesomeIcons.arrowLeft),
               onPressed: () {
                 if (webcontroller != null) {
                   webcontroller.goBack();
                 }
               },
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             FloatingActionButton(
               heroTag: 'gforward',
-              child: FaIcon(FontAwesomeIcons.arrowRight),
+              child: const FaIcon(FontAwesomeIcons.arrowRight),
               onPressed: () {
                 if (webcontroller != null) {
                   webcontroller.goForward();

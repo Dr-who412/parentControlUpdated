@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_open_street_map/flutter_open_street_map.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:parental/pages/app/child/browser.dart';
 import 'package:parental/pages/app/child/launcher.dart';
@@ -14,6 +13,8 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:location/location.dart';
 import '../../provider/sign_in.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:device_policy_manager/device_policy_manager.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class ChildApp extends StatefulWidget {
   const ChildApp({Key? key, required this.data, required this.doc})
@@ -38,33 +39,18 @@ class _ChildAppState extends State<ChildApp> {
     super.initState();
     timer = Timer.periodic(
         const Duration(seconds: 10), (Timer t) => sendLocation());
-  }
 
-  Future<void> _showMyDialog() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('AlertDialog Title'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const <Widget>[
-                Text('You can still use your phone'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Nice'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+    DevicePolicyManager.isPermissionGranted().then((value) {
+      if (!value) {
+        DevicePolicyManager.requestPermession().then((result) {
+          print(result);
+        });
+      } else {
+        PackageInfo.fromPlatform().then((packageInfo) {
+          print(packageInfo.packageName);
+        });
+      }
+    });
   }
 
   void generateQrCode() {
@@ -130,12 +116,12 @@ class _ChildAppState extends State<ChildApp> {
 
   void toBrowser() {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => ChildBrowser()));
+        context, MaterialPageRoute(builder: (context) => const ChildBrowser()));
   }
 
   void toQrCode() {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => QRCodeWidget()));
+        context, MaterialPageRoute(builder: (context) => const QRCodeWidget()));
   }
 
   @override
@@ -151,7 +137,7 @@ class _ChildAppState extends State<ChildApp> {
                   Provider.of<SignInProvider>(context, listen: false);
               provider.logout();
             },
-            icon: FaIcon(FontAwesomeIcons.arrowRightFromBracket),
+            icon: const FaIcon(FontAwesomeIcons.arrowRightFromBracket),
           )
         ],
       ),
@@ -161,7 +147,7 @@ class _ChildAppState extends State<ChildApp> {
             const SizedBox(
               height: 30,
             ),
-            Container(
+            SizedBox(
               width: 300,
               height: 150,
               child: Card(
@@ -230,7 +216,7 @@ class _ChildAppState extends State<ChildApp> {
             Expanded(
               flex: 2,
               child: Padding(
-                padding: EdgeInsets.only(bottom: 80),
+                padding: const EdgeInsets.only(bottom: 80),
                 child: usages,
               ),
             ),
@@ -239,7 +225,8 @@ class _ChildAppState extends State<ChildApp> {
       ),
       floatingActionButton: SpeedDial(
         animatedIcon: AnimatedIcons.menu_close,
-        animatedIconTheme: IconThemeData(size: 30, color: Color(0xffff1da5)),
+        animatedIconTheme:
+            const IconThemeData(size: 30, color: Color(0xffff1da5)),
         backgroundColor: Colors.white,
         visible: true,
         curve: Curves.bounceIn,
@@ -247,40 +234,41 @@ class _ChildAppState extends State<ChildApp> {
         spaceBetweenChildren: 20,
         children: [
           SpeedDialChild(
-              child: FaIcon(FontAwesomeIcons.android, color: Color(0xffff1da5)),
+              child: const FaIcon(FontAwesomeIcons.android,
+                  color: Color(0xffff1da5)),
               onTap: toLauncher,
               label: 'App Launcher',
-              labelStyle: TextStyle(
+              labelStyle: const TextStyle(
                   fontWeight: FontWeight.w500,
                   color: Color(0xff067bc2),
                   fontSize: 16.0),
               visible: canPlay),
           SpeedDialChild(
-            child: FaIcon(
+            child: const FaIcon(
               FontAwesomeIcons.globe,
               color: Color(0xffff1da5),
             ),
             onTap: toBrowser,
             label: 'Open Browser',
-            labelStyle: TextStyle(
+            labelStyle: const TextStyle(
                 fontWeight: FontWeight.w500,
                 color: Color(0xff067bc2),
                 fontSize: 16.0),
           ),
           SpeedDialChild(
-            child: FaIcon(
+            child: const FaIcon(
               FontAwesomeIcons.qrcode,
               color: Color(0xffff1da5),
             ),
             onTap: toQrCode,
             label: 'Pair to Parent',
-            labelStyle: TextStyle(
+            labelStyle: const TextStyle(
                 fontWeight: FontWeight.w500,
                 color: Color(0xff067bc2),
                 fontSize: 16.0),
           ),
           SpeedDialChild(
-            child: FaIcon(
+            child: const FaIcon(
               FontAwesomeIcons.pen,
               color: Color(0xffff1da5),
             ),
@@ -291,7 +279,21 @@ class _ChildAppState extends State<ChildApp> {
                       builder: (context) => const ConfigurationPage()));
             },
             label: 'Edit Profile',
-            labelStyle: TextStyle(
+            labelStyle: const TextStyle(
+                fontWeight: FontWeight.w500,
+                color: Color(0xff067bc2),
+                fontSize: 16.0),
+          ),
+          SpeedDialChild(
+            child: const FaIcon(
+              FontAwesomeIcons.pen,
+              color: Color(0xffff1da5),
+            ),
+            onTap: () {
+              DevicePolicyManager.lockNow();
+            },
+            label: 'Lock',
+            labelStyle: const TextStyle(
                 fontWeight: FontWeight.w500,
                 color: Color(0xff067bc2),
                 fontSize: 16.0),

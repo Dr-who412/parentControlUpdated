@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:parental/pages/app/child/browserpages/GooglePage.dart';
 import 'package:parental/pages/app/child/browserpages/YoutubePage.dart';
@@ -33,7 +31,7 @@ class _ChildBrowserState extends State<ChildBrowser>
     return Scaffold(
       appBar: AppBar(title: const Text("Browser")),
       bottomNavigationBar: Container(
-        color: Color(0xffff1da5),
+        color: const Color(0xffff1da5),
         child: TabBar(
           controller: tabController,
           tabs: const <Tab>[
@@ -49,9 +47,9 @@ class _ChildBrowserState extends State<ChildBrowser>
         ),
       ),
       body: TabBarView(
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         controller: tabController,
-        children: [GoogleBrowserPage(), YoutubeBrowserPage()],
+        children: const [GoogleBrowserPage(), YoutubeBrowserPage()],
       ),
     );
   }

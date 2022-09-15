@@ -137,6 +137,24 @@ class _SignInPageState extends State<SignInPage> {
                                       side: BorderSide(color: Colors.red)))),
                     ),
                   ),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        final provider =
+                            Provider.of<SignInProvider>(context, listen: false);
+                        String message =
+                            await provider.emailSignUp(_email, _password);
+                        _showMyDialog(message);
+                      },
+                      child: const Text("Sign Up"),
+                      style: ButtonStyle(
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18.0),
+                                      side: BorderSide(color: Colors.red)))),
+                    ),
+                  ),
                 ],
               ),
 
