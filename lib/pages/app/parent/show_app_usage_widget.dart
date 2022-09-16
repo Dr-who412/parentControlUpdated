@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ShowAppUsageWidget extends StatefulWidget {
@@ -15,7 +13,6 @@ class ShowAppUsageWidget extends StatefulWidget {
 class _ShowAppUsageWidgetState extends State<ShowAppUsageWidget> {
   @override
   Widget build(BuildContext context) {
-    print(widget.data);
     final Stream<QuerySnapshot<Map<String, dynamic>>> usersStream =
         FirebaseFirestore.instance
             .collection('users')
@@ -30,11 +27,6 @@ class _ShowAppUsageWidgetState extends State<ShowAppUsageWidget> {
             try {
               List<QueryDocumentSnapshot<Map<String, dynamic>>> apps =
                   snapshot.data!.docs;
-              apps.forEach(
-                (element) {
-                  print(element.data());
-                },
-              );
               return Scaffold(
                   appBar: AppBar(title: const Text("App Usage")),
                   body: ListView.builder(
@@ -53,9 +45,7 @@ class _ShowAppUsageWidgetState extends State<ShowAppUsageWidget> {
                               .collection('appsUsage')
                               .doc(apps[position].id)
                               .set({'blocked': !blocked},
-                                  SetOptions(merge: true)).then((value) {
-                            print("updated");
-                          });
+                                  SetOptions(merge: true)).then((value) {});
                         },
                         title: Text(data['appName']),
                         trailing: Text(data['usage']),
@@ -69,15 +59,15 @@ class _ShowAppUsageWidgetState extends State<ShowAppUsageWidget> {
                     child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("You are not paired with a child yet"),
-                    SizedBox(
+                    const Text("You are not paired with a child yet"),
+                    const SizedBox(
                       height: 30,
                     ),
                     ElevatedButton(
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: Text("Go back"))
+                        child: const Text("Go back"))
                   ],
                 )),
               );
@@ -88,20 +78,20 @@ class _ShowAppUsageWidgetState extends State<ShowAppUsageWidget> {
                   child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("You are not paired with a child yet"),
-                  SizedBox(
+                  const Text("You are not paired with a child yet"),
+                  const SizedBox(
                     height: 30,
                   ),
                   ElevatedButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: Text("Go back"))
+                      child: const Text("Go back"))
                 ],
               )),
             );
           } else {
-            return Scaffold(
+            return const Scaffold(
               body: Center(child: CircularProgressIndicator()),
             );
           }

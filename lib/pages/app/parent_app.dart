@@ -31,7 +31,9 @@ class _ParentAppState extends State<ParentApp> {
           .then((result) {
         pairChild(result.rawContent);
       });
-    } catch (e) {}
+    } catch (e) {
+      return;
+    }
   }
 
   void pairChild(String id) {
@@ -53,12 +55,12 @@ class _ParentAppState extends State<ParentApp> {
   }
 
   Widget showChild(BuildContext context) {
-    final Stream<DocumentSnapshot> _usersStream = FirebaseFirestore.instance
+    final Stream<DocumentSnapshot> usersStream = FirebaseFirestore.instance
         .collection('users')
         .doc(widget.data['child'])
         .snapshots();
     return StreamBuilder<DocumentSnapshot>(
-        stream: _usersStream,
+        stream: usersStream,
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.hasData && snapshot.data!.exists) {
@@ -69,7 +71,7 @@ class _ParentAppState extends State<ParentApp> {
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
                   children: [
-                    Center(
+                    const Center(
                         child: Text(
                       "Child Data",
                       style:
@@ -77,12 +79,12 @@ class _ParentAppState extends State<ParentApp> {
                     )),
                     Row(
                       children: [
-                        Icon(Icons.face),
-                        Text(
+                        const Icon(Icons.face),
+                        const Text(
                           "|",
                           style: TextStyle(fontSize: 25),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 5,
                         ),
                         Text(data['name'])
@@ -90,15 +92,15 @@ class _ParentAppState extends State<ParentApp> {
                     ),
                     Row(
                       children: [
-                        FaIcon(FontAwesomeIcons.hashtag),
-                        SizedBox(
+                        const FaIcon(FontAwesomeIcons.hashtag),
+                        const SizedBox(
                           width: 3,
                         ),
-                        Text(
+                        const Text(
                           "|",
                           style: TextStyle(fontSize: 25),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 5,
                         ),
                         Text(data['age'].toString())
@@ -106,12 +108,12 @@ class _ParentAppState extends State<ParentApp> {
                     ),
                     Row(
                       children: [
-                        FaIcon(FontAwesomeIcons.phone),
-                        Text(
+                        const FaIcon(FontAwesomeIcons.phone),
+                        const Text(
                           "|",
                           style: TextStyle(fontSize: 25),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 5,
                         ),
                         Text(data['phoneNumber'])
@@ -131,11 +133,12 @@ class _ParentAppState extends State<ParentApp> {
                       child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Pair with your child first"),
-                      SizedBox(
+                      const Text("Pair with your child first"),
+                      const SizedBox(
                         height: 20,
                       ),
-                      ElevatedButton(onPressed: scanQr, child: Text('Pair'))
+                      ElevatedButton(
+                          onPressed: scanQr, child: const Text('Pair'))
                     ],
                   )),
                 ),
@@ -257,7 +260,7 @@ class _ParentAppState extends State<ParentApp> {
                       ),
                       Text(
                         widget.data['name'],
-                        style: TextStyle(fontSize: 25),
+                        style: const TextStyle(fontSize: 25),
                       ),
                     ],
                   ),
@@ -426,11 +429,11 @@ class _ParentAppState extends State<ParentApp> {
                 color: Color(0xFF067BC2)),
           ),
           SpeedDialChild(
-            child: FaIcon(
+            child: const FaIcon(
               FontAwesomeIcons.pen,
               color: Colors.white,
             ),
-            backgroundColor: Color(0xffff1da5),
+            backgroundColor: const Color(0xffff1da5),
             onTap: () {
               Navigator.push(
                   context,
@@ -438,7 +441,7 @@ class _ParentAppState extends State<ParentApp> {
                       builder: (context) => const ConfigurationPage()));
             },
             label: 'Edit Profile',
-            labelStyle: TextStyle(
+            labelStyle: const TextStyle(
                 fontWeight: FontWeight.w500,
                 color: Color(0xff067bc2),
                 fontSize: 16.0),

@@ -19,7 +19,7 @@
 
 
    <application
-        android:label="parental"
+        android:label="Kidami"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 

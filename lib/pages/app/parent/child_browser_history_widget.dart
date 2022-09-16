@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ChildBrowserHistoryWidget extends StatefulWidget {
   const ChildBrowserHistoryWidget({Key? key, required this.data})
@@ -48,7 +46,7 @@ class _ChildBrowserHistoryWidgetState extends State<ChildBrowserHistoryWidget> {
                                     Clipboard.setData(
                                         ClipboardData(text: data['url']));
                                     ScaffoldMessenger.of(context)
-                                        .showSnackBar(SnackBar(
+                                        .showSnackBar(const SnackBar(
                                       content: Text("Copied to clipboard"),
                                       duration: Duration(milliseconds: 500),
                                     ));
@@ -59,7 +57,7 @@ class _ChildBrowserHistoryWidgetState extends State<ChildBrowserHistoryWidget> {
                                     children: [
                                       Text(
                                         data['website'],
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontSize: 17,
                                             fontWeight: FontWeight.w500),
                                       ),
@@ -87,13 +85,13 @@ class _ChildBrowserHistoryWidgetState extends State<ChildBrowserHistoryWidget> {
                                         .set({'url': data['website']}).then(
                                             (value) {
                                       ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
+                                          .showSnackBar(const SnackBar(
                                         content: Text("Website Blocked"),
                                         duration: Duration(milliseconds: 1000),
                                       ));
                                     });
                                   },
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.block,
                                   ),
                                 )
@@ -104,7 +102,6 @@ class _ChildBrowserHistoryWidgetState extends State<ChildBrowserHistoryWidget> {
                     itemCount: apps.length,
                   ));
             } catch (e) {
-              print(e);
               return const Text("Something went wrong");
             }
           } else if (snapshot.hasData && snapshot.data!.size <= 0) {
@@ -113,20 +110,20 @@ class _ChildBrowserHistoryWidgetState extends State<ChildBrowserHistoryWidget> {
                   child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("You are not paired with a child yet"),
-                  SizedBox(
+                  const Text("You are not paired with a child yet"),
+                  const SizedBox(
                     height: 30,
                   ),
                   ElevatedButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: Text("Go back"))
+                      child: const Text("Go back"))
                 ],
               )),
             );
           } else {
-            return Scaffold(
+            return const Scaffold(
               body: Center(child: CircularProgressIndicator()),
             );
           }

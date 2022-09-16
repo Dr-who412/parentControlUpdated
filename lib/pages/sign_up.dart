@@ -1,18 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:parental/pages/sign_up.dart';
 import 'package:parental/provider/sign_in.dart';
 import 'package:provider/provider.dart';
 
-class SignInPage extends StatefulWidget {
-  const SignInPage({Key? key, required this.title}) : super(key: key);
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({Key? key, required this.title}) : super(key: key);
   final String title;
 
   @override
-  State<SignInPage> createState() => _SignInPageState();
+  State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _SignInPageState extends State<SignInPage> {
+class _SignUpPageState extends State<SignUpPage> {
   late String _email, _password;
   final auth = FirebaseAuth.instance;
 
@@ -58,7 +57,7 @@ class _SignInPageState extends State<SignInPage> {
                 height: 90,
               ),
               const Text(
-                "Welcome Back!",
+                "Welcome! Create and account!",
                 style: TextStyle(fontSize: 35),
                 textAlign: TextAlign.center,
               ),
@@ -119,8 +118,9 @@ class _SignInPageState extends State<SignInPage> {
                         final provider =
                             Provider.of<SignInProvider>(context, listen: false);
                         String message =
-                            await provider.emailLogin(_email, _password);
+                            await provider.emailSignUp(_email, _password);
                         _showMyDialog(message);
+                        Navigator.pop(context);
                       },
                       style: ButtonStyle(
                           shape: MaterialStateProperty.all<
@@ -128,7 +128,7 @@ class _SignInPageState extends State<SignInPage> {
                               RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(18.0),
                                   side: const BorderSide(color: Colors.red)))),
-                      child: const Text("Login"),
+                      child: const Text("Sign Up"),
                     ),
                   ),
                 ],
@@ -136,17 +136,12 @@ class _SignInPageState extends State<SignInPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Dont have an account yet?"),
+                  Text("Already have an accont?"),
                   TextButton(
                       onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SignUpPage(
-                                      title: 'hello',
-                                    )));
+                        Navigator.pop(context);
                       },
-                      child: Text("SignUp"))
+                      child: Text("Login"))
                 ],
               ),
               const SizedBox(

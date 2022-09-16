@@ -8,10 +8,10 @@ import 'package:flutter/services.dart';
 class AppScanner extends StatefulWidget {
   const AppScanner({Key? key}) : super(key: key);
   @override
-  _AppScannerState createState() => _AppScannerState();
+  AppScannerState createState() => AppScannerState();
 }
 
-class _AppScannerState extends State<AppScanner> {
+class AppScannerState extends State<AppScanner> {
   ScanResult? scanResult;
 
   final _flashOnController = TextEditingController(text: 'Flash on');

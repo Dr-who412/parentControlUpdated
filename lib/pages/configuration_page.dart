@@ -53,7 +53,7 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                   try {
                     _age = int.parse(value.toString());
                   } catch (e) {
-                    print(e);
+                    _age = 0;
                   }
                 });
               })),

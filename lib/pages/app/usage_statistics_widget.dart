@@ -8,7 +8,7 @@ import 'app_tile_widget.dart';
 
 class UsageStatisticsWidget extends StatefulWidget {
   UsageStatisticsWidget({Key? key}) : super(key: key);
-  final _UsageStatisticsWidgetState wid = _UsageStatisticsWidgetState();
+  final UsageStatisticsWidgetState wid = UsageStatisticsWidgetState();
 
   int getDuration() {
     return wid.getDuration();
@@ -18,7 +18,7 @@ class UsageStatisticsWidget extends StatefulWidget {
   State<UsageStatisticsWidget> createState() => wid;
 }
 
-class _UsageStatisticsWidgetState extends State<UsageStatisticsWidget> {
+class UsageStatisticsWidgetState extends State<UsageStatisticsWidget> {
   List<Widget> icons = [];
   List<AppTileWidget> usageApps = [];
   Timer? timer;
@@ -100,7 +100,7 @@ class _UsageStatisticsWidgetState extends State<UsageStatisticsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (usageApps.length == 0) {
+    if (usageApps.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -116,11 +116,11 @@ class _UsageStatisticsWidgetState extends State<UsageStatisticsWidget> {
     } else {
       return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color(0x00),
+          backgroundColor: const Color(0x00000000),
           elevation: 0,
           title: Text(
             "Duration Left: ${screenTime.inMinutes} minutes",
-            style: TextStyle(color: Color(0xff067bc2)),
+            style: const TextStyle(color: Color(0xff067bc2)),
           ),
         ),
         body: Scrollbar(

@@ -13,7 +13,6 @@ class ChildLocationWidget extends StatefulWidget {
 class _ChildLocationWidgetState extends State<ChildLocationWidget> {
   @override
   Widget build(BuildContext context) {
-    print(widget.data);
     final Stream<DocumentSnapshot> usersStream = FirebaseFirestore.instance
         .collection('users')
         .doc(widget.data['child'])
@@ -39,21 +38,22 @@ class _ChildLocationWidgetState extends State<ChildLocationWidget> {
                     child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("You are not paired with a child yet"),
-                    SizedBox(
+                    const Text("You are not paired with a child yet"),
+                    const SizedBox(
                       height: 30,
                     ),
                     ElevatedButton(
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: Text("Go back"))
+                        child: const Text("Go back"))
                   ],
                 )),
               );
             }
           } else {
-            return Scaffold(body: Center(child: CircularProgressIndicator()));
+            return const Scaffold(
+                body: Center(child: CircularProgressIndicator()));
           }
         });
   }

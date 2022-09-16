@@ -53,6 +53,9 @@ dependencies:
   device_policy_manager: 
     path: ./device_policy_manager-0.0.1 - modified/
   package_info_plus: ^1.4.3+1
+  introduction_screen: ^3.0.2
+  shared_preferences: ^2.0.15
+  flutter_launcher_icons: ^0.10.0
 
 dev_dependencies:
   flutter_test:
@@ -64,6 +67,11 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+
+  
+flutter_icons: 
+  android: true
+  image_path: "assets/kidami.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -42,13 +42,9 @@ class _ChildAppState extends State<ChildApp> {
 
     DevicePolicyManager.isPermissionGranted().then((value) {
       if (!value) {
-        DevicePolicyManager.requestPermession().then((result) {
-          print(result);
-        });
+        DevicePolicyManager.requestPermession().then((result) {});
       } else {
-        PackageInfo.fromPlatform().then((packageInfo) {
-          print(packageInfo.packageName);
-        });
+        PackageInfo.fromPlatform().then((packageInfo) {});
       }
     });
   }
@@ -70,27 +66,27 @@ class _ChildAppState extends State<ChildApp> {
     }
     Location location = Location();
 
-    bool _serviceEnabled;
-    PermissionStatus _permissionGranted;
-    LocationData _locationData;
+    bool serviceEnabled;
+    PermissionStatus permissionGranted;
+    LocationData locationData;
 
-    _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
+    serviceEnabled = await location.serviceEnabled();
+    if (!serviceEnabled) {
+      serviceEnabled = await location.requestService();
+      if (!serviceEnabled) {
         return;
       }
     }
 
-    _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
+    permissionGranted = await location.hasPermission();
+    if (permissionGranted == PermissionStatus.denied) {
+      permissionGranted = await location.requestPermission();
+      if (permissionGranted != PermissionStatus.granted) {
         return;
       }
     }
 
-    _locationData = await location.getLocation();
+    locationData = await location.getLocation();
     final doc =
         FirebaseFirestore.instance.collection('users').doc(widget.doc?.id);
 
@@ -101,8 +97,8 @@ class _ChildAppState extends State<ChildApp> {
               .collection('users')
               .doc(widget.doc?.id)
               .set({
-            'latitude': _locationData.latitude,
-            'longitude': _locationData.longitude
+            'latitude': locationData.latitude,
+            'longitude': locationData.longitude
           }, SetOptions(merge: true));
         }
       }
@@ -110,8 +106,8 @@ class _ChildAppState extends State<ChildApp> {
   }
 
   void toLauncher() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => AppsListScreen()));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const AppsListScreen()));
   }
 
   void toBrowser() {
@@ -279,20 +275,6 @@ class _ChildAppState extends State<ChildApp> {
                       builder: (context) => const ConfigurationPage()));
             },
             label: 'Edit Profile',
-            labelStyle: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Color(0xff067bc2),
-                fontSize: 16.0),
-          ),
-          SpeedDialChild(
-            child: const FaIcon(
-              FontAwesomeIcons.pen,
-              color: Color(0xffff1da5),
-            ),
-            onTap: () {
-              DevicePolicyManager.lockNow();
-            },
-            label: 'Lock',
             labelStyle: const TextStyle(
                 fontWeight: FontWeight.w500,
                 color: Color(0xff067bc2),

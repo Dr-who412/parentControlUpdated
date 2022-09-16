@@ -9,10 +9,10 @@ class YoutubeBrowserPage extends StatefulWidget {
   const YoutubeBrowserPage({Key? key}) : super(key: key);
 
   @override
-  _YoutubeBrowserPageState createState() => _YoutubeBrowserPageState();
+  YoutubeBrowserPageState createState() => YoutubeBrowserPageState();
 }
 
-class _YoutubeBrowserPageState extends State<YoutubeBrowserPage>
+class YoutubeBrowserPageState extends State<YoutubeBrowserPage>
     with AutomaticKeepAliveClientMixin {
   final Completer<WebViewController> _controller =
       Completer<WebViewController>();
@@ -23,15 +23,13 @@ class _YoutubeBrowserPageState extends State<YoutubeBrowserPage>
   int index = 0;
 
   Future<bool> checkIfBlocked(String url) async {
-    print('https://' + url.split("/")[2]);
     return FirebaseFirestore.instance
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .collection('blockedWebsites')
-        .where('url', isEqualTo: 'https://' + url.split("/")[2])
+        .where('url', isEqualTo: 'https://${url.split("/")[2]}')
         .get()
         .then((result) {
-      print(result.size);
       if (result.size > 0) {
         return true;
       } else {
@@ -45,6 +43,7 @@ class _YoutubeBrowserPageState extends State<YoutubeBrowserPage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
         body: SafeArea(
           child: WebView(
@@ -59,7 +58,7 @@ class _YoutubeBrowserPageState extends State<YoutubeBrowserPage>
             navigationDelegate: (NavigationRequest request) {
               return checkIfBlocked(request.url).then((value) {
                 if (value) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text("This website is blocked"),
                     duration: Duration(milliseconds: 2000),
                   ));
@@ -78,10 +77,8 @@ class _YoutubeBrowserPageState extends State<YoutubeBrowserPage>
                   .set({
                 'url': url,
                 'date': Timestamp.fromDate(DateTime.now()),
-                'website': 'https://' + url.split("/")[2],
-              }).then((value) {
-                print('history saved');
-              });
+                'website': 'https://${url.split("/")[2]}',
+              }).then((value) {});
               setState(() {
                 urls.add(url);
                 index++;
@@ -96,21 +93,17 @@ class _YoutubeBrowserPageState extends State<YoutubeBrowserPage>
           children: [
             FloatingActionButton(
               heroTag: 'ybackward',
-              child: FaIcon(FontAwesomeIcons.arrowLeft),
+              child: const FaIcon(FontAwesomeIcons.arrowLeft),
               onPressed: () {
-                if (webcontroller != null) {
-                  webcontroller.goBack();
-                }
+                webcontroller.goBack();
               },
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             FloatingActionButton(
               heroTag: 'yforward',
-              child: FaIcon(FontAwesomeIcons.arrowRight),
+              child: const FaIcon(FontAwesomeIcons.arrowRight),
               onPressed: () {
-                if (webcontroller != null) {
-                  webcontroller.goForward();
-                }
+                webcontroller.goForward();
               },
             ),
           ],

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:parental/pages/home_page.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:parental/pages/onboarding_widget.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+  const SplashScreen({Key? key, required this.showHome}) : super(key: key);
+  final bool showHome;
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -23,12 +24,14 @@ class _SplashScreenState extends State<SplashScreen> {
 
   _moveToHome() {
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const HomePage()));
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                widget.showHome ? const HomePage() : const BoardApp()));
   }
 
   @override
   Widget build(BuildContext context) {
-    final String assetName = 'assets/vectorpaint.svg';
     return Scaffold(
         body: Center(
             child: Padding(
@@ -37,12 +40,12 @@ class _SplashScreenState extends State<SplashScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SvgPicture.asset(
-            assetName,
+          Image.asset(
+            'assets/kidami.png',
             width: 500,
             height: 500,
           ),
-          Container(
+          const SizedBox(
             width: 250,
             child: Text(
               "e-Monitoring mobile application for children’s actvities towards their actions on their mobile phones",
@@ -50,10 +53,10 @@ class _SplashScreenState extends State<SplashScreen> {
               style: TextStyle(fontStyle: FontStyle.italic),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
-          Text(
+          const Text(
             "In City College of Calamba",
             textAlign: TextAlign.center,
           )

@@ -4,11 +4,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AppsListScreen extends StatefulWidget {
+  const AppsListScreen({Key? key}) : super(key: key);
+
   @override
-  _AppsListScreenState createState() => _AppsListScreenState();
+  AppsListScreenState createState() => AppsListScreenState();
 }
 
-class _AppsListScreenState extends State<AppsListScreen> {
+class AppsListScreenState extends State<AppsListScreen> {
   bool _showSystemApps = false;
   bool _onlyLaunchableApps = false;
 
@@ -16,14 +18,14 @@ class _AppsListScreenState extends State<AppsListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Installed applications'),
+        title: const Text('Installed applications'),
         actions: <Widget>[
           PopupMenuButton<String>(
             itemBuilder: (BuildContext context) {
               return <PopupMenuItem<String>>[
-                PopupMenuItem<String>(
+                const PopupMenuItem<String>(
                     value: 'system_apps', child: Text('Toggle system apps')),
-                PopupMenuItem<String>(
+                const PopupMenuItem<String>(
                   value: 'launchable_apps',
                   child: Text('Toggle launchable apps only'),
                 )
@@ -58,8 +60,8 @@ class _AppsListScreenContent extends StatelessWidget {
 
   const _AppsListScreenContent(
       {Key? key,
-      this.includeSystemApps: false,
-      this.onlyAppsWithLaunchIntent: false})
+      this.includeSystemApps = false,
+      this.onlyAppsWithLaunchIntent = false})
       : super(key: key);
 
   @override
@@ -94,14 +96,11 @@ class _AppsListScreenContent extends StatelessWidget {
                               .doc(app.packageName)
                               .get()
                               .then((result) {
-                            print(result.exists);
                             if (result.exists) {
-                              bool blocked = result.data()!['blocked'] == null
-                                  ? false
-                                  : result.data()!['blocked'];
+                              bool blocked = result.data()!['blocked'] ?? false;
                               if (blocked) {
                                 ScaffoldMessenger.of(context)
-                                    .showSnackBar(SnackBar(
+                                    .showSnackBar(const SnackBar(
                                   content: Text("This app is blocked"),
                                   duration: Duration(milliseconds: 2000),
                                 ));
@@ -113,7 +112,7 @@ class _AppsListScreenContent extends StatelessWidget {
                             }
                           });
                         },
-                        title: Text('${app.appName}'),
+                        title: Text(app.appName),
                         subtitle: Text('Version: ${app.versionName}\n'),
                       ),
                       const Divider(
@@ -160,7 +159,7 @@ class _AppButtonAction extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
 
-  _AppButtonAction({required this.label, this.onPressed});
+  const _AppButtonAction({required this.label, this.onPressed});
 
   @override
   Widget build(BuildContext context) {

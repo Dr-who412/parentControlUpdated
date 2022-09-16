@@ -3,16 +3,23 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:parental/pages/spash_screen.dart';
 import 'package:parental/provider/sign_in.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  runApp(const MyApp());
+  final prefs = await SharedPreferences.getInstance();
+  final showHome = prefs.getBool('showHome') ?? false;
+
+  runApp(MyApp(
+    showHome: showHome,
+  ));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final bool showHome;
+  const MyApp({Key? key, required this.showHome}) : super(key: key);
 
   // This widget is the root of your application.
   @override
@@ -23,6 +30,8 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const SplashScreen(),
+        home: SplashScreen(
+          showHome: showHome,
+        ),
       ));
 }

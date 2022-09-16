@@ -176,7 +176,7 @@ class _FlutterOpenStreetMapState extends State<FlutterOpenStreetMap> {
                     _mapController.move(
                         _mapController.center, _mapController.zoom + 1);
                   },
-                  child: Icon(Icons.add),
+                  child: const Icon(Icons.add),
                 )),
           if (showZoom)
             Positioned(
@@ -189,7 +189,7 @@ class _FlutterOpenStreetMapState extends State<FlutterOpenStreetMap> {
                     _mapController.move(
                         _mapController.center, _mapController.zoom - 1);
                   },
-                  child: Icon(Icons.remove),
+                  child: const Icon(Icons.remove),
                 )),
           Positioned(
             top: 0,
@@ -294,7 +294,6 @@ class _FlutterOpenStreetMapState extends State<FlutterOpenStreetMap> {
                           as Map<dynamic, dynamic>;
 
                   _searchController.text = decodedResponse['display_name'];
-                  print(_mapController.center);
                   setState(() {});
                 }, backgroundcolor: Theme.of(context).primaryColor),
               ),
@@ -375,7 +374,7 @@ class PickedData {
 
   @override
   String toString() {
-    return 'PickedData{' + ' latLong: $latLong,' + ' address: $address,' + '}';
+    return 'PickedData{ latLong: $latLong, address: $address,}';
   }
 
   PickedData copyWith({

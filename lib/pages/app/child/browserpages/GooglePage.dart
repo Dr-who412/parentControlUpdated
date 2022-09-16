@@ -9,10 +9,10 @@ class GoogleBrowserPage extends StatefulWidget {
   const GoogleBrowserPage({Key? key}) : super(key: key);
 
   @override
-  _GoogleBrowserPageState createState() => _GoogleBrowserPageState();
+  GoogleBrowserPageState createState() => GoogleBrowserPageState();
 }
 
-class _GoogleBrowserPageState extends State<GoogleBrowserPage>
+class GoogleBrowserPageState extends State<GoogleBrowserPage>
     with AutomaticKeepAliveClientMixin {
   final Completer<WebViewController> _controller =
       Completer<WebViewController>();
@@ -30,7 +30,7 @@ class _GoogleBrowserPageState extends State<GoogleBrowserPage>
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .collection('blockedWebsites')
-        .where('url', isEqualTo: 'https://' + url.split("/")[2])
+        .where('url', isEqualTo: 'https://${url.split("/")[2]}')
         .get()
         .then((result) {
       if (result.size > 0) {
@@ -77,10 +77,8 @@ class _GoogleBrowserPageState extends State<GoogleBrowserPage>
                   .set({
                 'url': url,
                 'date': Timestamp.fromDate(DateTime.now()),
-                'website': 'https://' + url.split("/")[2],
-              }).then((value) {
-                print('history saved');
-              });
+                'website': 'https://${url.split("/")[2]}',
+              }).then((value) {});
               setState(() {
                 urls.add(url);
                 index++;
@@ -97,9 +95,7 @@ class _GoogleBrowserPageState extends State<GoogleBrowserPage>
               heroTag: 'gbackward',
               child: const FaIcon(FontAwesomeIcons.arrowLeft),
               onPressed: () {
-                if (webcontroller != null) {
-                  webcontroller.goBack();
-                }
+                webcontroller.goBack();
               },
             ),
             const SizedBox(height: 10),
@@ -107,9 +103,7 @@ class _GoogleBrowserPageState extends State<GoogleBrowserPage>
               heroTag: 'gforward',
               child: const FaIcon(FontAwesomeIcons.arrowRight),
               onPressed: () {
-                if (webcontroller != null) {
-                  webcontroller.goForward();
-                }
+                webcontroller.goForward();
               },
             ),
           ],

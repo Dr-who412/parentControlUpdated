@@ -17,8 +17,8 @@ class HomePage extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-          colorScheme:
-              ColorScheme.fromSwatch().copyWith(primary: Color(0xFFFF1DA5))),
+          colorScheme: ColorScheme.fromSwatch()
+              .copyWith(primary: const Color(0xFFFF1DA5))),
       home: const MyHomePage(),
     );
   }
@@ -93,21 +93,21 @@ class _UserPageState extends State<UserPage> {
       }
     });
 
-    final Stream<DocumentSnapshot> _usersStream =
+    final Stream<DocumentSnapshot> usersStream =
         FirebaseFirestore.instance.collection('users').doc(id).snapshots();
 
     if (configured) {
       return StreamBuilder<DocumentSnapshot>(
-        stream: _usersStream,
+        stream: usersStream,
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           } else if ((snapshot.connectionState == ConnectionState.active) &&
               !snapshot.hasData) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           } else if (snapshot.hasData) {
@@ -126,15 +126,15 @@ class _UserPageState extends State<UserPage> {
                 );
               }
             } catch (e) {
-              return Text("Something went wrong");
+              return const Text("Something went wrong");
             }
           } else {
-            return Text("Something went wrong");
+            return const Text("Something went wrong");
           }
         },
       );
     } else {
-      return Center(
+      return const Center(
         child: CircularProgressIndicator(),
       );
     }
