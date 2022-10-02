@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:parental/pages/app/child/browser.dart';
 import 'package:parental/pages/app/child/launcher.dart';
+import 'package:parental/pages/app/child/parent_location_map_widget%20copy.dart';
 import 'package:parental/pages/app/qrcode_widget.dart';
 import 'package:parental/pages/app/usage_statistics_widget.dart';
 import 'package:parental/pages/configuration_page.dart';
@@ -41,6 +42,7 @@ class _ChildAppState extends State<ChildApp> {
         const Duration(seconds: 10), (Timer t) => sendLocation());
 
     DevicePolicyManager.isPermissionGranted().then((value) {
+      print("Permitted? $value");
       if (!value) {
         DevicePolicyManager.requestPermession().then((result) {});
       } else {
@@ -103,6 +105,9 @@ class _ChildAppState extends State<ChildApp> {
         }
       }
     });
+    print(widget.data['parentlatitude']);
+    print(widget.data['parentlongitude']);
+    print(FirebaseAuth.instance.currentUser!.uid);
   }
 
   void toLauncher() {
@@ -120,167 +125,192 @@ class _ChildAppState extends State<ChildApp> {
         context, MaterialPageRoute(builder: (context) => const QRCodeWidget()));
   }
 
+  Future<bool> handleBackPress() async {
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Parental Controls"),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: () {
-              final provider =
-                  Provider.of<SignInProvider>(context, listen: false);
-              provider.logout();
-            },
-            icon: const FaIcon(FontAwesomeIcons.arrowRightFromBracket),
-          )
-        ],
-      ),
-      body: Center(
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 30,
-            ),
-            SizedBox(
-              width: 300,
-              height: 150,
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const FaIcon(
-                            FontAwesomeIcons.addressBook,
-                            size: 25,
-                          ),
-                          Text(
-                            "   ${widget.data['name']}",
-                            style: const TextStyle(fontSize: 20),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          const FaIcon(
-                            FontAwesomeIcons.hashtag,
-                            size: 25,
-                          ),
-                          Text(
-                            "   ${widget.data['age']}",
-                            style: const TextStyle(fontSize: 20),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          const FaIcon(
-                            FontAwesomeIcons.phone,
-                            size: 20,
-                          ),
-                          Text(
-                            "   ${widget.data['phoneNumber']}",
-                            style: const TextStyle(fontSize: 20),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          const FaIcon(
-                            FontAwesomeIcons.person,
-                            size: 25,
-                          ),
-                          Text(
-                            "    ${widget.data['identity']}",
-                            style: const TextStyle(fontSize: 20),
-                          ),
-                        ],
-                      ),
-                    ],
+    return WillPopScope(
+      onWillPop: () => handleBackPress(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Parental Controls"),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              onPressed: () {
+                final provider =
+                    Provider.of<SignInProvider>(context, listen: false);
+                provider.logout();
+              },
+              icon: const FaIcon(FontAwesomeIcons.arrowRightFromBracket),
+            )
+          ],
+        ),
+        body: Center(
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 30,
+              ),
+              SizedBox(
+                width: 300,
+                height: 150,
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const FaIcon(
+                              FontAwesomeIcons.addressBook,
+                              size: 25,
+                            ),
+                            Text(
+                              "   ${widget.data['name']}",
+                              style: const TextStyle(fontSize: 20),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            const FaIcon(
+                              FontAwesomeIcons.hashtag,
+                              size: 25,
+                            ),
+                            Text(
+                              "   ${widget.data['age']}",
+                              style: const TextStyle(fontSize: 20),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            const FaIcon(
+                              FontAwesomeIcons.phone,
+                              size: 20,
+                            ),
+                            Text(
+                              "   ${widget.data['phoneNumber']}",
+                              style: const TextStyle(fontSize: 20),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            const FaIcon(
+                              FontAwesomeIcons.person,
+                              size: 25,
+                            ),
+                            Text(
+                              "    ${widget.data['identity']}",
+                              style: const TextStyle(fontSize: 20),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 80),
-                child: usages,
+              const SizedBox(
+                height: 10,
               ),
-            ),
-          ],
+              Expanded(
+                flex: 2,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 80),
+                  child: usages,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      floatingActionButton: SpeedDial(
-        animatedIcon: AnimatedIcons.menu_close,
-        animatedIconTheme:
-            const IconThemeData(size: 30, color: Color(0xffff1da5)),
-        backgroundColor: Colors.white,
-        visible: true,
-        curve: Curves.bounceIn,
-        spacing: 10,
-        spaceBetweenChildren: 20,
-        children: [
-          SpeedDialChild(
-              child: const FaIcon(FontAwesomeIcons.android,
-                  color: Color(0xffff1da5)),
-              onTap: toLauncher,
-              label: 'App Launcher',
+        floatingActionButton: SpeedDial(
+          animatedIcon: AnimatedIcons.menu_close,
+          animatedIconTheme:
+              const IconThemeData(size: 30, color: Color(0xffff1da5)),
+          backgroundColor: Colors.white,
+          visible: true,
+          curve: Curves.bounceIn,
+          spacing: 10,
+          spaceBetweenChildren: 20,
+          children: [
+            SpeedDialChild(
+                child: const FaIcon(FontAwesomeIcons.android,
+                    color: Color(0xffff1da5)),
+                onTap: toLauncher,
+                label: 'App Launcher',
+                labelStyle: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xff067bc2),
+                    fontSize: 16.0),
+                visible: canPlay),
+            SpeedDialChild(
+              child: const FaIcon(
+                FontAwesomeIcons.globe,
+                color: Color(0xffff1da5),
+              ),
+              onTap: toBrowser,
+              label: 'Open Browser',
               labelStyle: const TextStyle(
                   fontWeight: FontWeight.w500,
                   color: Color(0xff067bc2),
                   fontSize: 16.0),
-              visible: canPlay),
-          SpeedDialChild(
-            child: const FaIcon(
-              FontAwesomeIcons.globe,
-              color: Color(0xffff1da5),
             ),
-            onTap: toBrowser,
-            label: 'Open Browser',
-            labelStyle: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Color(0xff067bc2),
-                fontSize: 16.0),
-          ),
-          SpeedDialChild(
-            child: const FaIcon(
-              FontAwesomeIcons.qrcode,
-              color: Color(0xffff1da5),
+            SpeedDialChild(
+              child: const FaIcon(
+                FontAwesomeIcons.qrcode,
+                color: Color(0xffff1da5),
+              ),
+              onTap: toQrCode,
+              label: 'Pair to Parent',
+              labelStyle: const TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xff067bc2),
+                  fontSize: 16.0),
             ),
-            onTap: toQrCode,
-            label: 'Pair to Parent',
-            labelStyle: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Color(0xff067bc2),
-                fontSize: 16.0),
-          ),
-          SpeedDialChild(
-            child: const FaIcon(
-              FontAwesomeIcons.pen,
-              color: Color(0xffff1da5),
+            SpeedDialChild(
+              child: const FaIcon(
+                FontAwesomeIcons.pen,
+                color: Color(0xffff1da5),
+              ),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ConfigurationPage()));
+              },
+              label: 'Edit Profile',
+              labelStyle: const TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xff067bc2),
+                  fontSize: 16.0),
             ),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const ConfigurationPage()));
-            },
-            label: 'Edit Profile',
-            labelStyle: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Color(0xff067bc2),
-                fontSize: 16.0),
-          ),
-        ],
+            SpeedDialChild(
+              child: const FaIcon(
+                FontAwesomeIcons.mapPin,
+                color: Color(0xFFFF1da5),
+              ),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ParentLocationWidget()));
+              },
+              backgroundColor: Colors.white,
+              label: 'Parent Location',
+              labelStyle: const TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16.0,
+                  color: Color(0xFF067BC2)),
+            ),
+          ],
+        ),
       ),
     );
   }

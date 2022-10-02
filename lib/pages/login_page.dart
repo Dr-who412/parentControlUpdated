@@ -44,118 +44,126 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
+  Future<bool> handleBackPress() async {
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Center(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 50, left: 20, right: 20),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              const SizedBox(
-                height: 90,
-              ),
-              const Text(
-                "Welcome Back!",
-                style: TextStyle(fontSize: 35),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(
-                height: 100,
-              ),
-              Container(
-                height: 50,
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                decoration: const BoxDecoration(
-                    color: Color.fromARGB(14, 0, 0, 0),
-                    borderRadius:
-                        BorderRadius.all(Radius.elliptical(100, 100))),
-                child: TextField(
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                      hintText: "Email",
-                      labelText: 'Email',
-                      border: InputBorder.none),
-                  onChanged: (value) {
-                    setState(() {
-                      _email = value.trim();
-                    });
-                  },
+    return WillPopScope(
+      onWillPop: () => handleBackPress(),
+      child: Scaffold(
+          body: Center(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 50, left: 20, right: 20),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 90,
                 ),
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              Container(
-                height: 50,
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                decoration: const BoxDecoration(
-                    color: Color.fromARGB(14, 0, 0, 0),
-                    borderRadius:
-                        BorderRadius.all(Radius.elliptical(100, 100))),
-                child: TextField(
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                      hintText: "Password",
-                      labelText: 'Password',
-                      border: InputBorder.none),
-                  onChanged: (value) {
-                    setState(() {
-                      _password = value.trim();
-                    });
-                  },
+                const Text(
+                  "Welcome Back!",
+                  style: TextStyle(fontSize: 35),
+                  textAlign: TextAlign.center,
                 ),
-              ),
-              const SizedBox(
-                height: 50,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        final provider =
-                            Provider.of<SignInProvider>(context, listen: false);
-                        String message =
-                            await provider.emailLogin(_email, _password);
-                        _showMyDialog(message);
-                      },
-                      style: ButtonStyle(
-                          shape: MaterialStateProperty.all<
-                                  RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18.0),
-                                  side: const BorderSide(color: Colors.red)))),
-                      child: const Text("Login"),
-                    ),
+                const SizedBox(
+                  height: 100,
+                ),
+                Container(
+                  height: 50,
+                  padding: const EdgeInsets.only(left: 20, right: 20),
+                  decoration: const BoxDecoration(
+                      color: Color.fromARGB(14, 0, 0, 0),
+                      borderRadius:
+                          BorderRadius.all(Radius.elliptical(100, 100))),
+                  child: TextField(
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(
+                        hintText: "Email",
+                        labelText: 'Email',
+                        border: InputBorder.none),
+                    onChanged: (value) {
+                      setState(() {
+                        _email = value.trim();
+                      });
+                    },
                   ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Dont have an account yet?"),
-                  TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SignUpPage(
-                                      title: 'hello',
-                                    )));
-                      },
-                      child: Text("SignUp"))
-                ],
-              ),
-              const SizedBox(
-                height: 100,
-              ),
-            ],
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                Container(
+                  height: 50,
+                  padding: const EdgeInsets.only(left: 20, right: 20),
+                  decoration: const BoxDecoration(
+                      color: Color.fromARGB(14, 0, 0, 0),
+                      borderRadius:
+                          BorderRadius.all(Radius.elliptical(100, 100))),
+                  child: TextField(
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                        hintText: "Password",
+                        labelText: 'Password',
+                        border: InputBorder.none),
+                    onChanged: (value) {
+                      setState(() {
+                        _password = value.trim();
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(
+                  height: 50,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          final provider = Provider.of<SignInProvider>(context,
+                              listen: false);
+                          String message =
+                              await provider.emailLogin(_email, _password);
+                          _showMyDialog(message);
+                        },
+                        style: ButtonStyle(
+                            shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18.0),
+                                    side:
+                                        const BorderSide(color: Colors.red)))),
+                        child: const Text("Login"),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Dont have an account yet?"),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SignUpPage(
+                                        title: 'hello',
+                                      )));
+                        },
+                        child: Text("SignUp"))
+                  ],
+                ),
+                const SizedBox(
+                  height: 100,
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    ));
+      )),
+    );
   }
 }

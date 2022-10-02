@@ -80,7 +80,7 @@ class UsageStatisticsWidgetState extends State<UsageStatisticsWidget> {
                     .doc(FirebaseAuth.instance.currentUser!.uid)
                     .collection('appsUsage')
                     .doc(app.packageName)
-                    .set(usageDoc);
+                    .set(usageDoc, SetOptions(merge: true));
               }
             }
           }

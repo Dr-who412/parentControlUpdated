@@ -75,6 +75,10 @@ class _UserPageState extends State<UserPage> {
         MaterialPageRoute(builder: (context) => const ConfigurationPage()));
   }
 
+  Future<bool> handleBackPress() async {
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<SignInProvider>(context, listen: false);
@@ -97,41 +101,44 @@ class _UserPageState extends State<UserPage> {
         FirebaseFirestore.instance.collection('users').doc(id).snapshots();
 
     if (configured) {
-      return StreamBuilder<DocumentSnapshot>(
-        stream: usersStream,
-        builder:
-            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if ((snapshot.connectionState == ConnectionState.active) &&
-              !snapshot.hasData) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasData) {
-            try {
-              Map<String, dynamic> data =
-                  snapshot.data?.data() as Map<String, dynamic>;
-              if (data['identity'] == 'parent') {
-                return ParentApp(
-                  data: data,
-                  id: id,
-                );
-              } else {
-                return ChildApp(
-                  data: data,
-                  doc: snapshot.data,
-                );
+      return WillPopScope(
+        onWillPop: () => handleBackPress(),
+        child: StreamBuilder<DocumentSnapshot>(
+          stream: usersStream,
+          builder:
+              (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if ((snapshot.connectionState == ConnectionState.active) &&
+                !snapshot.hasData) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasData) {
+              try {
+                Map<String, dynamic> data =
+                    snapshot.data?.data() as Map<String, dynamic>;
+                if (data['identity'] == 'parent') {
+                  return ParentApp(
+                    data: data,
+                    id: id,
+                  );
+                } else {
+                  return ChildApp(
+                    data: data,
+                    doc: snapshot.data,
+                  );
+                }
+              } catch (e) {
+                return const Text("Something went wrong");
               }
-            } catch (e) {
+            } else {
               return const Text("Something went wrong");
             }
-          } else {
-            return const Text("Something went wrong");
-          }
-        },
+          },
+        ),
       );
     } else {
       return const Center(

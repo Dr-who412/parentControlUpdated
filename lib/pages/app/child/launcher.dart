@@ -74,54 +74,118 @@ class _AppsListScreenContent extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         } else {
           List<Application> apps = data.data!;
-
           return Scrollbar(
-            child: ListView.builder(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                ),
                 itemBuilder: (BuildContext context, int position) {
                   Application app = apps[position];
-                  return Column(
-                    children: <Widget>[
-                      ListTile(
-                        leading: app is ApplicationWithIcon
-                            ? CircleAvatar(
-                                backgroundImage: MemoryImage(app.icon),
-                                backgroundColor: Colors.white,
-                              )
-                            : null,
-                        onTap: () {
-                          FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(FirebaseAuth.instance.currentUser!.uid)
-                              .collection('appsUsage')
-                              .doc(app.packageName)
-                              .get()
-                              .then((result) {
-                            if (result.exists) {
-                              bool blocked = result.data()!['blocked'] ?? false;
-                              if (blocked) {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(const SnackBar(
-                                  content: Text("This app is blocked"),
-                                  duration: Duration(milliseconds: 2000),
-                                ));
-                              } else {
-                                app.openApp();
-                              }
-                            } else {
-                              app.openApp();
-                            }
-                          });
-                        },
-                        title: Text(app.appName),
-                        subtitle: Text('Version: ${app.versionName}\n'),
+                  return GestureDetector(
+                    onTap: () {
+                      FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(FirebaseAuth.instance.currentUser!.uid)
+                          .collection('appsUsage')
+                          .doc(app.packageName)
+                          .get()
+                          .then((result) {
+                        if (result.exists) {
+                          bool blocked = result.data()!['blocked'] ?? false;
+                          if (blocked) {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text("This app is blocked"),
+                              duration: Duration(milliseconds: 2000),
+                            ));
+                          } else {
+                            app.openApp();
+                          }
+                        } else {
+                          app.openApp();
+                        }
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Image.memory(
+                            (app as ApplicationWithIcon).icon,
+                            width: 32,
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Flexible(
+                              child: RichText(
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,
+                                  strutStyle: StrutStyle(fontSize: 12.0),
+                                  text: TextSpan(
+                                      style: TextStyle(color: Colors.black),
+                                      text: app.appName))),
+                          // Text(
+                          //   app.appName,
+                          //   textAlign: TextAlign.center,
+                          // ),
+                        ],
                       ),
-                      const Divider(
-                        height: 1.0,
-                      )
-                    ],
+                    ),
                   );
                 },
-                itemCount: apps.length),
+                itemCount: apps.length,
+              ),
+            ),
+            // child: ListView.builder(
+            //     itemBuilder: (BuildContext context, int position) {
+            //       Application app = apps[position];
+            //       return Column(
+            //         children: <Widget>[
+            //           ListTile(
+            //             leading: app is ApplicationWithIcon
+            //                 ? CircleAvatar(
+            //                     backgroundImage: MemoryImage(app.icon),
+            //                     backgroundColor: Colors.white,
+            //                   )
+            //                 : null,
+            //             onTap: () {
+            //               FirebaseFirestore.instance
+            //                   .collection('users')
+            //                   .doc(FirebaseAuth.instance.currentUser!.uid)
+            //                   .collection('appsUsage')
+            //                   .doc(app.packageName)
+            //                   .get()
+            //                   .then((result) {
+            //                 if (result.exists) {
+            //                   bool blocked = result.data()!['blocked'] ?? false;
+            //                   if (blocked) {
+            //                     ScaffoldMessenger.of(context)
+            //                         .showSnackBar(const SnackBar(
+            //                       content: Text("This app is blocked"),
+            //                       duration: Duration(milliseconds: 2000),
+            //                     ));
+            //                   } else {
+            //                     app.openApp();
+            //                   }
+            //                 } else {
+            //                   app.openApp();
+            //                 }
+            //               });
+            //             },
+            //             title: Text(app.appName),
+            //             subtitle: Text('Version: ${app.versionName}\n'),
+            //           ),
+            //           const Divider(
+            //             height: 1.0,
+            //           )
+            //         ],
+            //       );
+            //     },
+            //     itemCount: apps.length),
           );
         }
       },

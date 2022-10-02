@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "211922377878",
-    "project_id": "parental-7db21",
-    "storage_bucket": "parental-7db21.appspot.com"
+    "project_number": "964018261354",
+    "project_id": "kidami-f5b92",
+    "storage_bucket": "kidami-f5b92.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:211922377878:android:95b947905162f8210276b7",
+        "mobilesdk_app_id": "1:964018261354:android:43124f74fbef0463d0a913",
         "android_client_info": {
           "package_name": "com.truak.parental"
         }
       },
       "oauth_client": [
         {
-          "client_id": "211922377878-ss6bivqg68fs85stf7lq4leq6endb0ql.apps.googleusercontent.com",
+          "client_id": "964018261354-25ih6d70cqcsnh5rqf93rinvfuq0nu2m.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCxUGOXaCaw_WSKCoR5Wmidskf2mj2Qq7o"
+          "current_key": "AIzaSyCDbmzzxcqVJe5UAPtFA5HtVsTBkq8mhjI"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "211922377878-ss6bivqg68fs85stf7lq4leq6endb0ql.apps.googleusercontent.com",
+              "client_id": "964018261354-25ih6d70cqcsnh5rqf93rinvfuq0nu2m.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
