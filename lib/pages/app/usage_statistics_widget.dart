@@ -46,7 +46,7 @@ class UsageStatisticsWidgetState extends State<UsageStatisticsWidget> {
     });
     Duration st = const Duration(hours: 20);
     DateTime startDate = endDate.subtract(const Duration(hours: 12));
-    await AppUsage.getAppUsage(startDate, endDate).then((infoList) async {
+    await AppUsage().getAppUsage(startDate, endDate).then((infoList) async {
       if (!mounted) return;
       await DeviceApps.getInstalledApplications(
               onlyAppsWithLaunchIntent: true, includeAppIcons: true)

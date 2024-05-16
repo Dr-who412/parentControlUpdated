@@ -221,178 +221,180 @@ class _ParentAppState extends State<ParentApp> {
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                const SizedBox(
-                  height: 30,
-                ),
-                // Card(
-                //   child: Padding(
-                //     padding: const EdgeInsets.all(8.0),
-                //     child: Column(
-                //       crossAxisAlignment: CrossAxisAlignment.start,
-                //       children: [
-                //         Row(
-                //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //           children: [
-                //             const FaIcon(
-                //               FontAwesomeIcons.addressBook,
-                //               size: 25,
-                //             ),
-                //             Text(
-                //               "   ${widget.data['name']}",
-                //               style: const TextStyle(fontSize: 20),
-                //             ),
-                //           ],
-                //         ),
-                //         Row(
-                //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //           children: [
-                //             const FaIcon(
-                //               FontAwesomeIcons.hashtag,
-                //               size: 25,
-                //             ),
-                //             Text(
-                //               "   ${widget.data['age']}",
-                //               style: const TextStyle(fontSize: 20),
-                //             ),
-                //           ],
-                //         ),
-                //         Row(
-                //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //           children: [
-                //             const FaIcon(
-                //               FontAwesomeIcons.phone,
-                //               size: 20,
-                //             ),
-                //             Text(
-                //               "   ${widget.data['phoneNumber']}",
-                //               style: const TextStyle(fontSize: 20),
-                //             ),
-                //           ],
-                //         ),
-                //         Row(
-                //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //           children: [
-                //             const FaIcon(
-                //               FontAwesomeIcons.person,
-                //               size: 25,
-                //             ),
-                //             Text(
-                //               "    ${widget.data['identity']}",
-                //               style: const TextStyle(fontSize: 20),
-                //             ),
-                //           ],
-                //         ),
-                //       ],
-                //     ),
-                //   ),
-                // ),
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.face,
-                          size: 30,
-                        ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        const Text(
-                          "|",
-                          style: TextStyle(fontSize: 40),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          widget.data['name'],
-                          style: const TextStyle(fontSize: 25),
-                        ),
-                      ],
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  // Card(
+                  //   child: Padding(
+                  //     padding: const EdgeInsets.all(8.0),
+                  //     child: Column(
+                  //       crossAxisAlignment: CrossAxisAlignment.start,
+                  //       children: [
+                  //         Row(
+                  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //           children: [
+                  //             const FaIcon(
+                  //               FontAwesomeIcons.addressBook,
+                  //               size: 25,
+                  //             ),
+                  //             Text(
+                  //               "   ${widget.data['name']}",
+                  //               style: const TextStyle(fontSize: 20),
+                  //             ),
+                  //           ],
+                  //         ),
+                  //         Row(
+                  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //           children: [
+                  //             const FaIcon(
+                  //               FontAwesomeIcons.hashtag,
+                  //               size: 25,
+                  //             ),
+                  //             Text(
+                  //               "   ${widget.data['age']}",
+                  //               style: const TextStyle(fontSize: 20),
+                  //             ),
+                  //           ],
+                  //         ),
+                  //         Row(
+                  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //           children: [
+                  //             const FaIcon(
+                  //               FontAwesomeIcons.phone,
+                  //               size: 20,
+                  //             ),
+                  //             Text(
+                  //               "   ${widget.data['phoneNumber']}",
+                  //               style: const TextStyle(fontSize: 20),
+                  //             ),
+                  //           ],
+                  //         ),
+                  //         Row(
+                  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //           children: [
+                  //             const FaIcon(
+                  //               FontAwesomeIcons.person,
+                  //               size: 25,
+                  //             ),
+                  //             Text(
+                  //               "    ${widget.data['identity']}",
+                  //               style: const TextStyle(fontSize: 20),
+                  //             ),
+                  //           ],
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.face,
+                            size: 30,
+                          ),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          const Text(
+                            "|",
+                            style: TextStyle(fontSize: 40),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            widget.data['name'],
+                            style: const TextStyle(fontSize: 25),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Card(
-                  elevation: 0,
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            const FaIcon(
-                              FontAwesomeIcons.hashtag,
-                              size: 25,
-                            ),
-                            const SizedBox(
-                              width: 5,
-                            ),
-                            const Text(
-                              "|",
-                              style: TextStyle(fontSize: 30),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              widget.data['age'].toString(),
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            const FaIcon(
-                              FontAwesomeIcons.phone,
-                              size: 25,
-                            ),
-                            const SizedBox(
-                              width: 2,
-                            ),
-                            const Text(
-                              "|",
-                              style: TextStyle(fontSize: 30),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              widget.data['phoneNumber'].toString(),
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            const FaIcon(
-                              FontAwesomeIcons.person,
-                              size: 25,
-                            ),
-                            const SizedBox(
-                              width: 11,
-                            ),
-                            const Text(
-                              "|",
-                              style: TextStyle(fontSize: 30),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              widget.data['identity'].toString(),
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                          ],
-                        ),
-                      ],
+                  Card(
+                    elevation: 0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              const FaIcon(
+                                FontAwesomeIcons.hashtag,
+                                size: 25,
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              const Text(
+                                "|",
+                                style: TextStyle(fontSize: 30),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                widget.data['age'].toString(),
+                                style: const TextStyle(fontSize: 20),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              const FaIcon(
+                                FontAwesomeIcons.phone,
+                                size: 25,
+                              ),
+                              const SizedBox(
+                                width: 2,
+                              ),
+                              const Text(
+                                "|",
+                                style: TextStyle(fontSize: 30),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                widget.data['phoneNumber'].toString(),
+                                style: const TextStyle(fontSize: 20),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              const FaIcon(
+                                FontAwesomeIcons.person,
+                                size: 25,
+                              ),
+                              const SizedBox(
+                                width: 11,
+                              ),
+                              const Text(
+                                "|",
+                                style: TextStyle(fontSize: 30),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                widget.data['identity'].toString(),
+                                style: const TextStyle(fontSize: 20),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                showChild(context),
-              ],
+                  showChild(context),
+                ],
+              ),
             ),
           ),
         ),

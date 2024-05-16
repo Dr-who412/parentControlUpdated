@@ -54,9 +54,9 @@ class _ChildAppState extends State<ChildApp> {
   void generateQrCode() {
     setState(() {
       toReturn.add(
-        QrImage(data: FirebaseAuth.instance.currentUser!.uid),
+        QrImageView(data: FirebaseAuth.instance.currentUser!.uid),
       );
-      qrCode = QrImage(data: FirebaseAuth.instance.currentUser!.uid);
+      qrCode = QrImageView(data: FirebaseAuth.instance.currentUser!.uid);
     });
   }
 

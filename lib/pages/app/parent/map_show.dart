@@ -80,9 +80,9 @@ class _FlutterOpenStreetMapState extends State<FlutterOpenStreetMap> {
   void initState() {
     _mapController = MapController();
 
-    _mapController.onReady.then((_) {
-      setNameCurrentPosAtInit();
-    });
+    // _mapController.onReady.then((_) {
+       setNameCurrentPosAtInit();
+    // });
 
     _mapController.mapEventStream.listen((event) async {
       if (event is MapEventMoveEnd) {
@@ -133,16 +133,27 @@ class _FlutterOpenStreetMapState extends State<FlutterOpenStreetMap> {
                 maxZoom: 18,
                 minZoom: 6),
             mapController: _mapController,
-            layers: [
-              TileLayerOptions(
+
+            children: [
+              TileLayer(
                 urlTemplate:
-                    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                 subdomains: ['a', 'b', 'c'],
                 // attributionBuilder: (_) {
                 //   return Text("© OpenStreetMap contributors");
                 // },
               ),
             ],
+            // layers: [
+            //   TileLayerOptions(
+            //     urlTemplate:
+            //         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            //     subdomains: ['a', 'b', 'c'],
+            //     // attributionBuilder: (_) {
+            //     //   return Text("© OpenStreetMap contributors");
+            //     // },
+            //   ),
+            // ],
           )),
           Positioned(
               top: MediaQuery.of(context).size.height * 0.5,
@@ -286,13 +297,17 @@ class _FlutterOpenStreetMapState extends State<FlutterOpenStreetMap> {
                       LatLng(widget.center.latitude, widget.center.longitude),
                       _mapController.zoom);
                   var client = http.Client();
+                  print('lat=${_mapController.center.latitude}&lon=${_mapController.center.longitude}');
                   String url =
                       'https://nominatim.openstreetmap.org/reverse?format=json&lat=${_mapController.center.latitude}&lon=${_mapController.center.longitude}&zoom=18&addressdetails=1';
-                  var response = await client.post(Uri.parse(url));
+                  print(url);
+                  var response = await client.get(Uri.parse(url));
+                  print(utf8.decode(response.bodyBytes));
                   var decodedResponse =
                       jsonDecode(utf8.decode(response.bodyBytes))
                           as Map<dynamic, dynamic>;
-
+                  print(decodedResponse['lat']);
+_mapController.move(LatLng(double.parse(decodedResponse['lat']),double.parse( decodedResponse['lon'])), 1);
                   _searchController.text = decodedResponse['display_name'];
                   setState(() {});
                 }, backgroundcolor: Theme.of(context).primaryColor),

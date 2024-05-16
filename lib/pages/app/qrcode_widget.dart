@@ -19,7 +19,7 @@ class _QRCodeWidgetState extends State<QRCodeWidget> {
       body: Center(
           child: Padding(
         padding: const EdgeInsets.all(50.0),
-        child: QrImage(data: FirebaseAuth.instance.currentUser!.uid),
+        child: QrImageView(data: FirebaseAuth.instance.currentUser!.uid),
       )),
     );
   }
